@@ -34,6 +34,16 @@ void add_EnvVar(char *name, char *value){
     VarArray_count++;
 }
 
+//Checks if EnvVar exists or not
+int check_EnvVar(char *name){
+    for(int i = 0; i < VarArray_count; i++){
+        if(!strcmp(VarArray[i].name, name)){
+            return i;
+        }
+    }
+    return -1;
+}
+
 
 // *******
 // Built-in-commands
@@ -80,9 +90,35 @@ char ** parse_line(char * line){
     // delim are the values that will be parsed out of line into tokens using strtok()
     char *delim = " \t\r\n\a";
     char *token = strtok(line, delim);
+    char first_char = token[0];
+    char *dupStr = NULL;
+    int check_var = -1;
 
     while (token != NULL) {
-        tokens[count] = token;
+
+        first_char = token[0];
+        if((count != 0) && (first_char == '$')){ //Checks if arg is a EnvVar
+            dupStr = strdup(token);
+            dupStr++;
+            check_var = check_EnvVar(dupStr);
+
+            //If envVar exists then it replaces it with its value, otherwise it prints error 
+            //and cancels execution by returning tokens[0] = NULL
+            if(check_var > -1){
+                tokens[count] = VarArray[check_var].value;
+            }
+            else{
+                printf("ERROR: %s does not exist\n", dupStr);
+                tokens[0] = NULL;
+                return tokens;
+            }
+
+        }
+
+        else{
+            tokens[count] = token;
+        }
+
         count++;
 
         if (count >= size) {
@@ -101,7 +137,7 @@ char ** parse_line(char * line){
 
 void execute_tokens(char **tokens) {
 
-    //Check if Env Var
+    //Check if Env Var addition
     char first_char = tokens[0][0];
     if(first_char == '$'){
         const char deli[] = "=";
