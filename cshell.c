@@ -4,16 +4,43 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-typedef struct EnvVariable {
+typedef struct EnvVariable{
     char *name;
     char *value;
 } EnvVar;
+
+EnvVar * VarArray;
+size_t VarArray_len = 32;
+size_t VarArray_count = 0;
+
+void add_EnvVar(char *name, char *value){
+
+    //Check if Var name already exists or not
+    for(int i = 0; i < VarArray_count; i++){
+        if(!strcmp(VarArray[i].name, name)){
+            printf("ERROR: %s already exists \n", name);
+            return;
+        }
+    }
+
+    //Check if array needs to be bigger
+    if(VarArray_len <= VarArray_count){
+        VarArray_len += VarArray_len;
+        VarArray = (EnvVar *) realloc(VarArray, (VarArray_len) * sizeof(EnvVar));
+    }
+
+    VarArray[VarArray_count].name = name;
+    VarArray[VarArray_count].value = value;
+    VarArray_count++;
+}
+
 
 // *******
 // Built-in-commands
 // *******
 
 void exit_command(char** tokens){
+    printf("Bye!");
     exit(0); //Exits the cshell
 }
 
@@ -33,7 +60,6 @@ char *BuiltIn_Names[] = {"exit", "print", "theme", "log"};
 void (*BuiltIn_Commands[])(char ** tokens) = {exit_command, print_command, theme_command, log_command};
 
 // ******           
-
 
 char * read_line(){
     //Reads 1 line from input and returns it
@@ -75,10 +101,28 @@ char ** parse_line(char * line){
 
 void execute_tokens(char **tokens) {
 
-    //Check if built-in command is called first
+    //Check if Env Var
+    char first_char = tokens[0][0];
+    if(first_char == '$'){
+        const char deli[] = "=";
+
+        char *dupStr = strdup(tokens[0]);
+        dupStr++;
+
+        char *token = strtok(dupStr, deli);
+        dupStr += strlen(token) + 1;
+
+
+        add_EnvVar(token, dupStr);
+
+        return;
+    }
+
+    //Check if built-in command is called
     for(int i = 0; i < 4; i++){
         if(!strcmp(BuiltIn_Names[i], tokens[0])){
             BuiltIn_Commands[i](tokens);
+            return;
         }
     }
 
@@ -111,6 +155,9 @@ void execute_tokens(char **tokens) {
 
 int main() {
 
+    //Initialize global Envvar array
+    VarArray = (EnvVar *) malloc(VarArray_len * sizeof(EnvVar));
+
 
     while (1) {
 
@@ -126,6 +173,8 @@ int main() {
         free(tokens);
         free(line);
     }
+
+    free(VarArray);
 
 
    return 0;
