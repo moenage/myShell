@@ -49,7 +49,7 @@ int check_EnvVar(char *name){
 // Built-in-commands
 // *******
 
-void exit_command(char** tokens){
+void exit_command(){
     printf("Bye!");
     exit(0); //Exits the cshell
 }
@@ -267,29 +267,53 @@ void execute_tokens(char **tokens) {
 }
 
 
-int main() {
+int main(int argc, char **argv) {
 
     //Initialize global Envvar array
     VarArray = (EnvVar *) malloc(VarArray_len * sizeof(EnvVar));
 
-
-    while (1) {
-
-        printf("cshell$");
-        printf("\033[0m"); //chaning input to white
-        char *line = read_line();
-        char **tokens = parse_line(line);
-
-        if (tokens[0] != NULL) {
-            execute_tokens(tokens);
+    //Script Mode
+    if(argc == 2){
+        FILE* file = fopen(argv[1], "r");
+        if(file == NULL){
+            printf("ERROR: opening file");
+            exit_command();
         }
+        char line[256];
+        char* checker = fgets(line, sizeof(line), file);
+        while (checker != NULL) {
 
-        free(tokens);
-        free(line);
+            char **tokens = parse_line(line);
+
+            if (tokens[0] != NULL) {
+                execute_tokens(tokens);
+            }
+
+            free(tokens);
+            checker = fgets(line, sizeof(line), file);
+        }
+        fclose(file);
+    }
+
+    //Interactive Mode
+    else{
+        while (1) {
+
+            printf("cshell$");
+
+            char *line = read_line();
+            char **tokens = parse_line(line);
+
+            if (tokens[0] != NULL) {
+                execute_tokens(tokens);
+            }
+
+            free(tokens);
+            free(line);
+        }
     }
 
     free(VarArray);
-
 
    return 0;
 }
