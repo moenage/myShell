@@ -319,10 +319,11 @@ int main(int argc, char **argv) {
 
             
             printf("cshell$");
-            printf("\033[0;37m");
+            // printf("\033[0;37m");
             
             char *line = read_line();
             char **tokens = parse_line(line);
+            
             //printf("colour is %d", colour);
             // switch (colour)
             // {
@@ -343,28 +344,28 @@ int main(int argc, char **argv) {
             //     printf("\033[m");
             //     break;
             // }
-            if (colour == 2)
-            {
-                printf("\033[0;31m");
-            }
-            else if (colour == 3)
-            {
-                printf("\033[0;32m");
-            }
-            else if (colour == 5)
-            {
-                printf("HELLO BLUE");
-                printf("\033[0;34m");
-            }
-            else if (colour == 8)
-            {
-                printf("\033[0;37m");
-            }
+            // if (colour == 2)
+            // {
+            //     printf("\033[0;31m");
+            // }
+            // else if (colour == 3)
+            // {
+            //     printf("\033[0;32m");
+            // }
+            // else if (colour == 5)
+            // {
+            //     printf("HELLO BLUE");
+            //     printf("\033[0;34m");
+            // }
+            // else if (colour == 8)
+            // {
+            //     printf("\033[0;37m");
+            // }
             
 
 
             if (tokens[0] != NULL) {
-                //printf("colour is %d\n", colour);
+                // printf("colour is %d\n", colour);
                 execute_tokens(tokens);
             }
 
