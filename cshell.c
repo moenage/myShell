@@ -13,6 +13,9 @@ EnvVar * VarArray;
 size_t VarArray_len = 32;
 size_t VarArray_count = 0;
 
+int colour = 8;
+
+
 void add_EnvVar(char *name, char *value){
 
     //Check if Var name already exists or not
@@ -93,7 +96,7 @@ void theme_command(char** tokens){
     //     printf("red, green, blue\n");
     //     return;
     // } 
-    int colour = 8;
+    
     char* colourString = tokens[1];
     //printf("ColourString is %s", colourString);
     
@@ -109,6 +112,7 @@ void theme_command(char** tokens){
         
         printf("\033[0;31m");
         colour = 2;
+        //printf("WE HERE IN RED");
     }
     else if(strcmp(colourString, "green") == 0)
     {
@@ -264,6 +268,7 @@ void execute_tokens(char **tokens) {
     else if(pid == 0){
         // Child Process
         // This is where we execute non-built-in commands
+        
         execvp(tokens[0], tokens);
         printf("execvp Failed \n");
         exit(1);
@@ -312,12 +317,54 @@ int main(int argc, char **argv) {
     else{
         while (1) {
 
+            
             printf("cshell$");
             printf("\033[0;37m");
+            
             char *line = read_line();
             char **tokens = parse_line(line);
+            //printf("colour is %d", colour);
+            // switch (colour)
+            // {
+            // case '2':
+            //     printf("\033[0;31m");
+            //     printf("HERE IN 2");
+            //     break;
+            // case '3':
+            //     printf("\033[0;32m");
+            //     break;
+            // case '5':
+            //     printf("\033[0;34m");
+            //     break;
+            // case '8':
+            //     printf("\033[0;37m");
+            //     break;
+            // default:
+            //     printf("\033[m");
+            //     break;
+            // }
+            if (colour == 2)
+            {
+                printf("\033[0;31m");
+            }
+            else if (colour == 3)
+            {
+                printf("\033[0;32m");
+            }
+            else if (colour == 5)
+            {
+                printf("HELLO BLUE");
+                printf("\033[0;34m");
+            }
+            else if (colour == 8)
+            {
+                printf("\033[0;37m");
+            }
+            
+
 
             if (tokens[0] != NULL) {
+                //printf("colour is %d\n", colour);
                 execute_tokens(tokens);
             }
 
