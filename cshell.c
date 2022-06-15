@@ -49,7 +49,7 @@ int check_EnvVar(char *name){
 // Built-in-commands
 // *******
 
-void exit_command(char** tokens){
+void exit_command(){
     printf("Bye!");
     exit(0); //Exits the cshell
 }
@@ -59,85 +59,7 @@ void print_command(char** tokens){
 }
 
 void theme_command(char** tokens){
-    if (tokens[1] == NULL)
-    {
-        //printf("Invalid Colour, please enter a colour again in only lowercase. Note:\nEnter 'theme colours' to be presented with a list of available themes\n");
-        // printf("unsupported theme");
-        return;
-    }
-    // else if (strcmp(tokens[1], "colours")==0){
-    //     printf("red, green, blue\n");
-    //     return;
-    // } 
-    int colour = 8;
-    char* colourString = tokens[1];
-    //printf("ColourString is %s", colourString);
-    
-    // if (strcmp(colourString, "black") == 0)
-    // {
-        
-    //     printf("\033[1;30m");
-    //     colour = 1;
-    // }
-    // else 
-    if(strcmp(colourString, "red") == 0)
-    {
-        
-        printf("\033[1;31m");
-        colour = 2;
-    }
-    else if(strcmp(colourString, "green") == 0)
-    {
-        
-        printf("\033[1;32m");
-        colour = 3;
-    }
-    // else if(strcmp(colourString, "yellow") == 0)
-    // {
-        
-    //     printf("\033[1;33m");
-    //     colour = 4;
-    // }
-    else if(strcmp(colourString, "blue") == 0)
-    {
-        
-        printf("\033[1;34m");
-        colour = 5;
-    }
-    // else if(strcmp(colourString, "purple") == 0)
-    // {
-        
-    //     printf("\033[1;35m");
-    //     colour = 6;
-    // }
-    // else if(strcmp(colourString, "cyan") == 0)
-    // {
-        
-    //     printf("\033[1;36m");
-    //     colour = 7;
-    // }
-    else
-    {
-        printf("unsupported theme\n");
-        printf("\033[1;37m");
-        colour = 8;
-    }
-
-
-    //printf("Colour is %d", colour);
-    
-    // switch (colour)
-    // {
-    // case '1':
-    //     printf("\033[1;31m");
-    //     break;
-    
-    // default:
-    
-    //     printf("\033[1;37m");
-    //     break;
-    // }
-    //printf("First argument is %s\n", tokens[1]);
+    printf("theme");
 }
 
 void log_command(char** tokens){
@@ -147,13 +69,16 @@ void log_command(char** tokens){
 char *BuiltIn_Names[] = {"exit", "print", "theme", "log"};
 void (*BuiltIn_Commands[])(char ** tokens) = {exit_command, print_command, theme_command, log_command};
 
-// ******           
+// ******        
+
 
 char * read_line(){
-    //Reads 1 line from input and returns it
     char *line = NULL;
     size_t size = 0;
+
+    //Reads 1 line from file and returns it
     getline(&line, &size, stdin);
+    
     return line;
 }
 
@@ -267,29 +192,53 @@ void execute_tokens(char **tokens) {
 }
 
 
-int main() {
+int main(int argc, char **argv) {
 
     //Initialize global Envvar array
     VarArray = (EnvVar *) malloc(VarArray_len * sizeof(EnvVar));
 
-
-    while (1) {
-
-        printf("cshell$");
-        printf("\033[0m"); //chaning input to white
-        char *line = read_line();
-        char **tokens = parse_line(line);
-
-        if (tokens[0] != NULL) {
-            execute_tokens(tokens);
+    //Script Mode
+    if(argc == 2){
+        FILE* file = fopen(argv[1], "r");
+        if(file == NULL){
+            printf("ERROR: opening file");
+            exit_command();
         }
+        char line[256];
+        char* checker = fgets(line, sizeof(line), file);
+        while (checker != NULL) {
 
-        free(tokens);
-        free(line);
+            char **tokens = parse_line(line);
+
+            if (tokens[0] != NULL) {
+                execute_tokens(tokens);
+            }
+
+            free(tokens);
+            checker = fgets(line, sizeof(line), file);
+        }
+        fclose(file);
+    }
+
+    //Interactive Mode
+    else{
+        while (1) {
+
+            printf("cshell$");
+
+            char *line = read_line();
+            char **tokens = parse_line(line);
+
+            if (tokens[0] != NULL) {
+                execute_tokens(tokens);
+            }
+
+            free(tokens);
+            free(line);
+        }
     }
 
     free(VarArray);
-
 
    return 0;
 }
