@@ -61,24 +61,26 @@ void print_command(char** tokens){
 void theme_command(char** tokens){
     if (tokens[1] == NULL)
     {
-        printf("Invalid Colour, please enter a colour again in only lowercase. Note:\nEnter 'theme colours' to be presented with a list of available themes\n");
+        //printf("Invalid Colour, please enter a colour again in only lowercase. Note:\nEnter 'theme colours' to be presented with a list of available themes\n");
+        // printf("unsupported theme");
         return;
     }
-    else if (strcmp(tokens[1], "colours")==0){
-        printf("black, red, green, yellow, blue, purple, cyan, white\n");
-        return;
-    } 
+    // else if (strcmp(tokens[1], "colours")==0){
+    //     printf("red, green, blue\n");
+    //     return;
+    // } 
     int colour = 8;
     char* colourString = tokens[1];
-    //printf("ColourString is %s\n", colourString);
+    //printf("ColourString is %s", colourString);
     
-    if (strcmp(colourString, "black") == 0)
-    {
+    // if (strcmp(colourString, "black") == 0)
+    // {
         
-        printf("\033[1;30m");
-        colour = 1;
-    }
-    else if(strcmp(colourString, "red") == 0)
+    //     printf("\033[1;30m");
+    //     colour = 1;
+    // }
+    // else 
+    if(strcmp(colourString, "red") == 0)
     {
         
         printf("\033[1;31m");
@@ -90,33 +92,33 @@ void theme_command(char** tokens){
         printf("\033[1;32m");
         colour = 3;
     }
-    else if(strcmp(colourString, "yellow") == 0)
-    {
+    // else if(strcmp(colourString, "yellow") == 0)
+    // {
         
-        printf("\033[1;33m");
-        colour = 4;
-    }
+    //     printf("\033[1;33m");
+    //     colour = 4;
+    // }
     else if(strcmp(colourString, "blue") == 0)
     {
         
         printf("\033[1;34m");
         colour = 5;
     }
-    else if(strcmp(colourString, "purple") == 0)
-    {
+    // else if(strcmp(colourString, "purple") == 0)
+    // {
         
-        printf("\033[1;35m");
-        colour = 6;
-    }
-    else if(strcmp(colourString, "cyan") == 0)
-    {
+    //     printf("\033[1;35m");
+    //     colour = 6;
+    // }
+    // else if(strcmp(colourString, "cyan") == 0)
+    // {
         
-        printf("\033[1;36m");
-        colour = 7;
-    }
+    //     printf("\033[1;36m");
+    //     colour = 7;
+    // }
     else
     {
-        
+        printf("unsupported theme\n");
         printf("\033[1;37m");
         colour = 8;
     }
