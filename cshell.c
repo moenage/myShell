@@ -59,7 +59,83 @@ void print_command(char** tokens){
 }
 
 void theme_command(char** tokens){
-    printf("theme");
+    if (tokens[1] == NULL)
+    {
+        printf("Invalid Colour, please enter a colour again in only lowercase. Note:\nEnter 'theme colours' to be presented with a list of available themes\n");
+        return;
+    }
+    else if (strcmp(tokens[1], "colours")==0){
+        printf("black, red, green, yellow, blue, purple, cyan, white\n");
+        return;
+    } 
+    int colour = 8;
+    char* colourString = tokens[1];
+    //printf("ColourString is %s\n", colourString);
+    
+    if (strcmp(colourString, "black") == 0)
+    {
+        
+        printf("\033[1;30m");
+        colour = 1;
+    }
+    else if(strcmp(colourString, "red") == 0)
+    {
+        
+        printf("\033[1;31m");
+        colour = 2;
+    }
+    else if(strcmp(colourString, "green") == 0)
+    {
+        
+        printf("\033[1;32m");
+        colour = 3;
+    }
+    else if(strcmp(colourString, "yellow") == 0)
+    {
+        
+        printf("\033[1;33m");
+        colour = 4;
+    }
+    else if(strcmp(colourString, "blue") == 0)
+    {
+        
+        printf("\033[1;34m");
+        colour = 5;
+    }
+    else if(strcmp(colourString, "purple") == 0)
+    {
+        
+        printf("\033[1;35m");
+        colour = 6;
+    }
+    else if(strcmp(colourString, "cyan") == 0)
+    {
+        
+        printf("\033[1;36m");
+        colour = 7;
+    }
+    else
+    {
+        
+        printf("\033[1;37m");
+        colour = 8;
+    }
+
+
+    //printf("Colour is %d", colour);
+    
+    // switch (colour)
+    // {
+    // case '1':
+    //     printf("\033[1;31m");
+    //     break;
+    
+    // default:
+    
+    //     printf("\033[1;37m");
+    //     break;
+    // }
+    //printf("First argument is %s\n", tokens[1]);
 }
 
 void log_command(char** tokens){
@@ -198,7 +274,7 @@ int main() {
     while (1) {
 
         printf("cshell$");
-
+        printf("\033[0m"); //chaning input to white
         char *line = read_line();
         char **tokens = parse_line(line);
 
