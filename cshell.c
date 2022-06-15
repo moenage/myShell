@@ -55,7 +55,31 @@ void exit_command(){
 }
 
 void print_command(char** tokens){
-    printf("print");
+    //printf("print");
+    if (tokens[1] == NULL)
+    {
+        return;
+    }
+    int counter = 0;
+    int i = 1;
+    while (tokens[i] != NULL)
+    {
+        counter++;
+        i++;
+    }
+    printf("%s", tokens[1]);
+    if (counter > 1)
+    {
+        for (int j = 1; j < counter; j++)
+        {
+            printf(" %s", tokens[j+1]);
+        }
+    }
+    printf("\n");
+    // printf("%s", tokens[1]);
+    // printf(" %s", tokens[2]);
+
+    // printf("Counter is %d\n", counter);
 }
 
 void theme_command(char** tokens){
@@ -83,60 +107,49 @@ void theme_command(char** tokens){
     if(strcmp(colourString, "red") == 0)
     {
         
-        printf("\033[1;31m");
+        printf("\033[0;31m");
         colour = 2;
     }
     else if(strcmp(colourString, "green") == 0)
     {
         
-        printf("\033[1;32m");
+        printf("\033[0;32m");
         colour = 3;
     }
     // else if(strcmp(colourString, "yellow") == 0)
     // {
         
-    //     printf("\033[1;33m");
+    //     printf("\033[0;33m");
     //     colour = 4;
     // }
     else if(strcmp(colourString, "blue") == 0)
     {
         
-        printf("\033[1;34m");
+        printf("\033[0;34m");
         colour = 5;
     }
     // else if(strcmp(colourString, "purple") == 0)
     // {
         
-    //     printf("\033[1;35m");
+    //     printf("\033[0;35m");
     //     colour = 6;
     // }
     // else if(strcmp(colourString, "cyan") == 0)
     // {
         
-    //     printf("\033[1;36m");
+    //     printf("\033[0;36m");
     //     colour = 7;
     // }
     else
     {
         printf("unsupported theme\n");
-        printf("\033[1;37m");
+        printf("\033[0;37m");
         colour = 8;
     }
 
 
     //printf("Colour is %d", colour);
-    
-    // switch (colour)
-    // {
-    // case '1':
-    //     printf("\033[1;31m");
-    //     break;
-    
-    // default:
-    
-    //     printf("\033[1;37m");
-    //     break;
-    // }
+
     //printf("First argument is %s\n", tokens[1]);
 }
 
@@ -300,7 +313,7 @@ int main(int argc, char **argv) {
         while (1) {
 
             printf("cshell$");
-
+            printf("\033[0;37m");
             char *line = read_line();
             char **tokens = parse_line(line);
 
