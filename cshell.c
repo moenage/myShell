@@ -33,12 +33,9 @@ void add_Log(char * name, int value){
    
 
     LogArray[LogArray_count].name = name;
-    LogArray[LogArray_count].time = localtime( &rawtime );;
+    LogArray[LogArray_count].time = localtime( &rawtime );
     LogArray[LogArray_count].value = value;
     LogArray_count++;
-    
-    // LogArray[LogArray_count].name = name;
-    // LogArray_count++;
 }
 
 void failed_log(){
@@ -125,40 +122,20 @@ void print_command(char** tokens){
         }
     }
     printf("\n");
-    // printf("%s", tokens[1]);
-    // printf(" %s", tokens[2]);
-
-    // printf("Counter is %d\n", counter);
 }
 
 void theme_command(char** tokens){
     if (tokens[1] == NULL)
     {
-        //printf("Invalid Colour, please enter a colour again in only lowercase. Note:\nEnter 'theme colours' to be presented with a list of available themes\n");
-        // printf("unsupported theme");
         return;
     }
-    // else if (strcmp(tokens[1], "colours")==0){
-    //     printf("red, green, blue\n");
-    //     return;
-    // } 
     
     char* colourString = tokens[1];
-    //printf("ColourString is %s", colourString);
-    
-    // if (strcmp(colourString, "black") == 0)
-    // {
-        
-    //     printf("\033[1;30m");
-    //     colour = 1;
-    // }
-    // else 
+
     if(strcmp(colourString, "red") == 0)
     {
-        
         printf("\033[0;31m");
         colour = 2;
-        //printf("WE HERE IN RED");
     }
     else if(strcmp(colourString, "green") == 0)
     {
@@ -166,40 +143,17 @@ void theme_command(char** tokens){
         printf("\033[0;32m");
         colour = 3;
     }
-    // else if(strcmp(colourString, "yellow") == 0)
-    // {
-        
-    //     printf("\033[0;33m");
-    //     colour = 4;
-    // }
     else if(strcmp(colourString, "blue") == 0)
     {
         
         printf("\033[0;34m");
         colour = 5;
     }
-    // else if(strcmp(colourString, "purple") == 0)
-    // {
-        
-    //     printf("\033[0;35m");
-    //     colour = 6;
-    // }
-    // else if(strcmp(colourString, "cyan") == 0)
-    // {
-        
-    //     printf("\033[0;36m");
-    //     colour = 7;
-    // }
     else
     {
         printf("unsupported theme\n");
         failed_log();
     }
-
-
-    //printf("Colour is %d", colour);
-
-    //printf("First argument is %s\n", tokens[1]);
 }
 
 void log_command(char** tokens){
@@ -378,53 +332,11 @@ int main(int argc, char **argv) {
 
             
             printf("cshell$");
-            // printf("\033[0;37m");
             
             char *line = read_line();
             char **tokens = parse_line(line);
-            
-            //printf("colour is %d", colour);
-            // switch (colour)
-            // {
-            // case '2':
-            //     printf("\033[0;31m");
-            //     printf("HERE IN 2");
-            //     break;
-            // case '3':
-            //     printf("\033[0;32m");
-            //     break;
-            // case '5':
-            //     printf("\033[0;34m");
-            //     break;
-            // case '8':
-            //     printf("\033[0;37m");
-            //     break;
-            // default:
-            //     printf("\033[m");
-            //     break;
-            // }
-            // if (colour == 2)
-            // {
-            //     printf("\033[0;31m");
-            // }
-            // else if (colour == 3)
-            // {
-            //     printf("\033[0;32m");
-            // }
-            // else if (colour == 5)
-            // {
-            //     printf("HELLO BLUE");
-            //     printf("\033[0;34m");
-            // }
-            // else if (colour == 8)
-            // {
-            //     printf("\033[0;37m");
-            // }
-            
-
 
             if (tokens[0] != NULL) {
-                // printf("colour is %d\n", colour);
                 execute_tokens(tokens);
             }
 
