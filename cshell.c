@@ -3,6 +3,52 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <time.h>
+
+
+// ******
+// Log
+// ******
+
+typedef struct {
+    char *name;
+    struct tm *time;
+    int value;
+} LogStruct;
+
+LogStruct * LogArray;
+size_t LogArray_len = 32;
+size_t LogArray_count = 0;
+
+void add_Log(char * name, int value){
+
+    //Check if array needs to be bigger
+    if(LogArray_len <= LogArray_count){
+        LogArray_len += LogArray_len;
+        LogArray = (LogStruct *) realloc(LogArray, (LogArray_len) * sizeof(LogStruct));
+    }
+
+    time_t rawtime;
+    struct tm * timeinfo;
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    LogArray[LogArray_count].name = name;
+    LogArray[LogArray_count].time = strdup(timeinfo);
+    LogArray[LogArray_count].value = value;
+    LogArray_count++;
+    
+    // LogArray[LogArray_count].name = name;
+    // LogArray_count++;
+}
+
+void failed_log(){
+    LogArray[LogArray_count-1].value = -1;
+}
+
+// ******
+// Environmental Variables
+// ******
 
 typedef struct EnvVariable{
     char *name;
@@ -61,6 +107,7 @@ void print_command(char** tokens){
     //printf("print");
     if (tokens[1] == NULL)
     {
+        failed_log();
         return;
     }
     int counter = 0;
@@ -147,8 +194,7 @@ void theme_command(char** tokens){
     else
     {
         printf("unsupported theme\n");
-        printf("\033[0;37m");
-        colour = 8;
+        failed_log();
     }
 
 
@@ -158,7 +204,12 @@ void theme_command(char** tokens){
 }
 
 void log_command(char** tokens){
-    printf("log");
+    for(size_t i = 0; i < LogArray_count-1; i++){
+        if(LogArray[i].value != -1){
+            printf("%s", asctime (LogArray[i].time));
+            printf("%s %d\n", LogArray[i].name, LogArray[i].value);
+        }
+    }
 }
 
 char *BuiltIn_Names[] = {"exit", "print", "theme", "log"};
@@ -249,9 +300,12 @@ void execute_tokens(char **tokens) {
         return;
     }
 
+    char *command_name = strdup(tokens[0]);
+
     //Check if built-in command is called
     for(int i = 0; i < 4; i++){
         if(!strcmp(BuiltIn_Names[i], tokens[0])){
+            add_Log(command_name, 0);
             BuiltIn_Commands[i](tokens);
             return;
         }
@@ -259,6 +313,7 @@ void execute_tokens(char **tokens) {
 
 
     pid_t pid = fork();
+    add_Log(command_name, 0);
 
     if(pid < 0){
         // Fork failed and exit
@@ -268,10 +323,9 @@ void execute_tokens(char **tokens) {
     else if(pid == 0){
         // Child Process
         // This is where we execute non-built-in commands
-        
         execvp(tokens[0], tokens);
-        printf("execvp Failed \n");
-        exit(1);
+        perror("Command not found");
+        exit(-1);
     }
     else if(pid > 0){
         //Parent Process
@@ -279,6 +333,9 @@ void execute_tokens(char **tokens) {
         int status;
         do{
             waitpid (pid, &status, WUNTRACED);
+            if(status != 0){
+                failed_log();
+            }
         }
         while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
@@ -286,6 +343,9 @@ void execute_tokens(char **tokens) {
 
 
 int main(int argc, char **argv) {
+
+    //Initialize global Log array
+    LogArray = (LogStruct *) malloc(LogArray_len * sizeof(LogStruct));
 
     //Initialize global Envvar array
     VarArray = (EnvVar *) malloc(VarArray_len * sizeof(EnvVar));

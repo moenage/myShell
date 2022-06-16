@@ -1,0 +1,10 @@
+theme red
+print test
+whoami
+$var=foo
+print $var
+$var2=blue
+theme $var2
+print $var2
+ls
+log
