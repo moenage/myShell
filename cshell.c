@@ -29,12 +29,11 @@ void add_Log(char * name, int value){
     }
 
     time_t rawtime;
-    struct tm * timeinfo;
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
+    time( &rawtime );
+   
 
     LogArray[LogArray_count].name = name;
-    LogArray[LogArray_count].time = strdup(timeinfo);
+    LogArray[LogArray_count].time = localtime( &rawtime );;
     LogArray[LogArray_count].value = value;
     LogArray_count++;
     
@@ -99,7 +98,7 @@ int check_EnvVar(char *name){
 // *******
 
 void exit_command(){
-    printf("Bye!");
+    printf("Bye!\n");
     exit(0); //Exits the cshell
 }
 
@@ -206,7 +205,7 @@ void theme_command(char** tokens){
 void log_command(char** tokens){
     for(size_t i = 0; i < LogArray_count-1; i++){
         if(LogArray[i].value != -1){
-            printf("%s", asctime (LogArray[i].time));
+            printf("%s", asctime(LogArray[i].time));
             printf("%s %d\n", LogArray[i].name, LogArray[i].value);
         }
     }
